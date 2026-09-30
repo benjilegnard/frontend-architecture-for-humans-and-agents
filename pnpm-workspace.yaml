@@ -1,2 +1,4 @@
 allowBuilds:
   '@parcel/watcher': true
+minimumReleaseAgeExclude:
+  - '@benjilegnard/reveal.js-mermaid-plugin@0.2.0'
