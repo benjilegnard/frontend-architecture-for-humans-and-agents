@@ -6,7 +6,7 @@ Titres alternatifs :
 - Des règles d'architecture que personne ne peut contourner, pas même votre agent
 - Architecture front-end exécutable : Sheriff, ts-arch et la boucle de feedback des agents
 
-Format : conférence 45 minutes (≈42 min de contenu + Q&A).
+Format : conférence 45 minutes (≈40 min de contenu + Q&A).
 Niveau : intermédiaire
 
 ## Abstract
@@ -36,8 +36,11 @@ essayer de modifier le test.
 ## Fil rouge
 
 Une seule codebase pendant tout le talk : on la dégrade, puis on la répare avec
-des règles exécutables. Pas de blocs de démo isolés, les démos sont réparties
-dans les sections 5 et 6.
+des règles exécutables. Pas de blocs de démo isolés : la codebase se dégrade et
+se répare bloc par bloc en section 3, le live outillé est en section 4 et la
+démo agent en section 5.
+
+Budget : 2 + 5 + 16 + 6 + 7 + 3 = 39 min de contenu, ≈6 min de Q&A.
 
 ## Plan détaillé
 
@@ -57,26 +60,52 @@ dans les sections 5 et 6.
   - le coût de l'archi : boilerplate, indirection, API publiques, cérémonie
   - nos propres limites cognitves, qui si l'on ne fait pas attention vont détruire la société
   - quand ne PAS faire ça : POC, appli jetable, dev solo, projet à durée de vie de moins d'un an
-// TODO fusionner 3 & 4 avec antipattern -> pattern -> règle
-- **3. Le catalogue des antipatterns (10 min)**
-  - format imposé pour chaque antipattern : symptôme, ce que ça coûte, la règle qui l'aurait attrapé
-  - tout dans un composant (data access + état + logique métier + template)
-  - le découpage par type technique (`components/`, `services/`, `pipes/`) au lieu du découpage par feature
-  - l'arborescence de fichiers qui recopie l'arbre de composants
-  - le god bucket : `shared/`, `common/`, `utils.ts`
-  - les dépendances circulaires entre features
-  - les barrel files qui masquent le couplage
-  - les deep imports cross-feature (aller piocher dans les entrailles du voisin)
-  - le props drilling sur 15 couches, faute d'état ou de service -> introduire store
-- **4. Les patterns qui tiennent (8 min)**
-  - feature slices : c'est quoi une "feature", et où s'arrête-t-elle
-  - API publique de module : `index.ts` comme seule porte d'entrée, interdire certains exports / modèle de sheriff
-  - le sens des dépendances : qui a le droit d'appeler qui, et pourquoi c'est unidirectionnel
-  - les types de modules par tags : `domain:x` et `type:feature|ui|data|util`
-  - smart / dumb, stores, coordinators : les blocs de construction à l'intérieur d'une feature
-  - les conventions de nommage comme intention lisible par une machine (suffixes `-store.ts`, `-client.ts`, `-page`, `-card`)
-  - la règle d'or : si vous ne savez pas nommer la contrainte, vous ne saurez pas l'outiller
-- **5. Des règles écrites aux règles exécutables (10 min)**
+- **3. Des antipatterns aux règles (16 min)**
+  - format imposé pour chaque bloc : antipattern → pattern → règle
+    - antipattern : le symptôme et ce qu'il coûte, montré sur la codebase de l'intro (features A, B, C, D)
+    - pattern : ce qui le corrige
+    - règle : un snippet exécutable de 3 à 5 lignes
+  - progression du plus petit au plus grand : un composant → une feature → les features entre elles
+  - la formule qui cadre la section : la règle n'attrape pas toujours l'antipattern, elle verrouille le pattern
+  - **3.1 Le composant qui fait tout (4 min)**
+    - antipattern : data access + état + logique métier + template dans un composant de 600 lignes ; intestable, non réutilisable, un agent qui le modifie touche à tout
+    - pattern : smart / dumb porté par le nommage, `-page` orchestre, `-card` (et les autres composants de présentation) affichent
+    - pattern : le composant éclaté en 4 rôles, ui / model / state / client
+    - pattern : le nommage comme intention lisible par une machine (`-page.ts`, `-card.ts`, `-store.ts`, `-client.ts`)
+    - règle : ESLint `no-restricted-imports`, `HttpClient` interdit hors des fichiers `*-client.ts`
+    - règle : ts-arch, les `*-card.ts` ne dépendent ni des `*-client.ts` ni des `*-store.ts`
+  - **3.2 Le props drilling (3 min)**
+    - antipattern : un `@Input` qui traverse 6 à 15 couches ; chaque composant intermédiaire connaît une donnée dont il n'a pas besoin, ajouter un champ modifie toute la chaîne
+    - pattern : le symptôme d'une gestion d'état absente, on introduit un `-store.ts` (signal store) ; seul le `-page` injecte le store, les composants dumb restent en inputs / outputs
+    - règle : ts-arch, `ui/**` ne dépend pas de `state/**`
+    - elle ne détecte pas le drilling, elle verrouille le pattern qui le rend inutile (première application de la formule)
+  - **3.3 Organiser une feature (3 min)**
+    - antipattern : le découpage par type technique (`components/`, `services/`, `pipes/`)
+    - antipattern : l'arborescence qui recopie l'arbre de composants, et casse à chaque refacto d'UI
+    - même cause pour les deux : on range par technique ou par UI, pas par domaine
+    - pattern : d'abord le domaine, ensuite le rôle ; les 4 rôles de 3.1 deviennent des dossiers (`booking/feature`, `booking/ui`, `booking/state`, `booking/client`, `booking/model`)
+    - pattern : c'est quoi une feature, et où s'arrête-t-elle
+    - règle : Sheriff, tags `domain:booking` et `type:feature|ui|state|client|model`, `depRules` entre types
+      - `feature` → `ui`, `state`, `model`
+      - `ui` → `model`
+      - `state` → `client`, `model`
+      - `client` → `model`
+  - **3.4 Ne pas mélanger les features (5 min)**
+    - le cœur du storytelling de l'intro : la feature D qui utilise A, B et C
+    - antipattern : les deep imports, D va piocher `booking/state/internal-helper.ts`
+    - antipattern : les dépendances circulaires, A importe B qui importe A
+    - antipattern : le god bucket, `shared/` devient le dépotoir de ce qu'on n'a pas su ranger et toute l'app en dépend
+    - pattern : API publique de module, `index.ts` comme seule porte d'entrée, on choisit ce qu'on n'exporte pas
+    - pattern : le sens des dépendances, unidirectionnel, et pourquoi
+    - pattern : quand D a besoin de A et B, on remonte dans un module partagé typé ou on orchestre au niveau de D, jamais de lien horizontal A ↔ B
+    - pattern : `shared/` sous discipline, `domain:shared` n'accepte que `ui`, `model` et `util`, jamais `state` ni `feature`
+    - slide de clarification sur les barrels : le barrel interne qui ré-exporte tout cache le couplage (antipattern), le barrel `index.ts` comme API publique est un contrat (pattern) ; teaser de la limite ts-arch (section 6)
+    - règle : Sheriff, encapsulation par `index.ts` (les deep imports sont bloqués par défaut) et règles `domain:*`
+    - règle : ts-arch `shouldBeFreeOfCycles()` (ou `import/no-cycle`) pour les cycles
+  - **clôture (1 min)**
+    - la règle d'or : si vous ne savez pas nommer la contrainte, vous ne saurez pas l'outiller
+    - transition : "on vient d'écrire 6 règles, laquelle tourne où, et quand ?"
+- **4. Des règles écrites aux règles exécutables (6 min)**
   - l'échelle de contexte du feedback, c'est le vrai critère de choix
     - ESLint : à la frappe, portée locale au fichier
     - Sheriff : dans l'IDE et en CLI, portée graphe d'imports (domaines, couches, encapsulation)
@@ -84,21 +113,20 @@ dans les sections 5 et 6.
     - nx enforce-module-boundaries : portée workspace, si vous êtes déjà en monorepo nx
     - CI : le filet de sécurité, jamais la boucle de feedback principale
   - la grille de décision : ce que chaque outil attrape, ce qu'il rate, ce que coûte son adoption
-  - example : écrire une règle Sheriff (tags + dependencyRules) et la faire échouer
-  - example : écrire une règle ts-arch (`filesOfProject().matchingPattern().shouldNot().dependOnFiles()`) et la faire échouer
+  - les snippets ont déjà été montrés en section 3 : ici, un seul live qui casse une règle de 3.4 sur le fil rouge
   - le setup réel : `tsconfig.arch.json`, le runner de tests, les scripts npm, le job CI
-- **6. La boucle de feedback des agents (7 min)**
+- **5. La boucle de feedback des agents (7 min)**
   - pourquoi un agent dérive : il optimise "du code qui marche", pas "du code qui respecte vos frontières"
   - les règles comme contexte partagé humains / agents : `AGENTS.md` pour réduire les hallucinations, hook et CI pour les empêcher. 
   - le context layering : always-on (`AGENTS.md`, `CLAUDE.md`) vs task-specific (`docs/architecture-boundaries.md`)
   - le stop hook : un `ci-checks.mjs` commun, la traduction du résultat par outil (exit code 2 pour Claude Code, JSON sur stdout pour Cursor)
   - démo : l'agent viole une frontière, le hook le rattrape, il se corrige tout seul
   - le mode d'échec qui compte : donnez un test à faire passer à un agent, il finira par modifier le test
-    - relâcher la contrainte d'archi plutôt que corriger le code
-    - renommer un fichier pour échapper au pattern de suffixe
+    - relâcher la contrainte d'archi plutôt que corriger le code (les règles de 3.4)
+    - renommer un fichier pour échapper au pattern de suffixe (les règles de 3.1 et 3.2)
     - la parade : propose-and-confirm, jamais de relâchement silencieux de règle (CODEOWNERS, deny en écriture sur les fichiers de règles)
   - on ne fait que mitiger les problèmes, mais c'est déjà ça de pris.
-- **7. Limites, et plan du lundi matin (3 min)**
+- **6. Limites, et plan du lundi matin (3 min)**
   - ce que ces outils ne savent pas faire
     - les suffixes sont une intention déclarée, pas une garantie
     - les re-exports en barrel masquent les chaînes de dépendances à ts-arch
@@ -113,9 +141,12 @@ dans les sections 5 et 6.
 
 ## À trancher avant de soumettre
 
-- périmètre framework : Angular assumé, ou démo neutre en TypeScript ? (les 3 sources sont Angular, Sheriff et ts-arch sont agnostiques)
 - retour d'expérience : est-ce qu'on a un vrai projet avec des chiffres avant / après, ou est-ce qu'on assume l'hypothèse ?
 - les démos agent sont non déterministes : scripter le terminal ou pré-enregistrer avec narration live, et ne garder en vrai live que la partie déterministe (Sheriff / ts-arch qui échoue)
+
+## Tranché
+
+- framework : Angular assumé pour les exemples ; Sheriff, ts-arch et ESLint s'appliquent à tout l'écosystème Node.js (à reporter dans un slide)
 
 ## Hors périmètre (assumé)
 
