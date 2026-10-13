@@ -31,10 +31,11 @@ With `pnpm dev` running, the deck is at `http://localhost:5173`. After editing s
   - A line containing only `---` (`^---$`) → new horizontal slide (a big section)
   - Blank lines (`^\n\n`) → new vertical slide within a section. A single blank line inside a slide is safe, but two blank lines in a row will split it, so be careful when editing whitespace.
   - `Notes:` at the start of a line → speaker notes for the rest of the slide
-- **Deck structure:** the first section is the talk itself, following the README plan. A separate "Exemples mermaid" section after it holds reference diagrams.
+- **Deck structure:** the first section is the talk itself, following the README plan. Separate "Exemples mermaid" and "Exemples de code" sections after it hold reference diagrams and snippets (based on the README sources).
 - `src/main.ts` initializes Reveal with Markdown, Mermaid (`@benjilegnard/reveal.js-mermaid-plugin`, the author's own plugin), Notes, and Highlight plugins. Plugin order matters: Mermaid after Markdown, before Highlight.
 - `src/style.scss` builds a custom reveal.js theme by injecting Catppuccin Mocha colors into reveal's theme template (`node_modules/reveal.js/css/theme/template/*`).
 - **Mermaid styling** is global: theme variables in `src/main.ts` (mapped from Catppuccin Mocha), CSS overrides in `src/style.scss` for what the variables can't reach, and a shared SVG gradient in `index.html`. Fix diagram styling there, not per diagram.
+- **Code highlights:** by default a code block shows all the code, with no line metadata. To walk through parts of it, the reveal.js line metadata must start with `[|` so the first step shows all the code before the highlighted steps, e.g. ```` ```ts [|6-8|11] ````.
 - **Writing Mermaid slides:** use ```` ```mermaid ```` blocks, never with blank lines inside. Prefer top-down layouts and short labels so diagrams stay readable at slide size.
 - `vite.config.ts` contains a small custom plugin that forces a full page reload when any `.md` file changes (Vite HMR doesn't pick up the runtime-fetched markdown otherwise).
 
