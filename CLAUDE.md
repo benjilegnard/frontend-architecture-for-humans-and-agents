@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A reveal.js slide deck for a 45-minute French-language conference talk: "Votre architecture n'existe que si elle est exécutable" (enforcing front-end architecture rules with Sheriff, ts-arch, ESLint, and agent feedback loops). `README.md` holds the abstract, the detailed section-by-section plan with timings, open decisions, and sources — treat it as the spec for slide content. Slide content and speaker notes are written in French.
+A reveal.js slide deck for a 45-minute French-language conference talk: "Renforçons les règles d'architecture frontend, pour les humains comme pour les agents" (subtitle: "Votre architecture n'existe que si elle est exécutable") (enforcing front-end architecture rules with Sheriff, ts-arch, ESLint, and agent feedback loops). `README.md` holds the abstract, the detailed section-by-section plan with timings, open decisions, and sources — treat it as the spec for slide content. Slide content and speaker notes are written in French.
 
 ## Commands
 
