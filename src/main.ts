@@ -37,6 +37,7 @@ deck.initialize({
       tertiaryColor: colors.base.hex,
       lineColor: colors.overlay2.hex,
       textColor: colors.subtext1.hex,
+      edgeLabelBackground: colors.base.hex,
     },
   },
 });
