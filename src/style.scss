@@ -44,4 +44,14 @@ iframe {
   filter: none;
 }
 
+// sequence diagrams ignore mermaid's useGradient, use the shared gradient from index.html
+// (only on boxes: a bounding box gradient on a straight line has 0 width/height and hides it)
+.reveal svg[aria-roledescription="sequence"] {
+  rect.actor,
+  rect.note,
+  .labelBox {
+    stroke: url(#mermaid-border-gradient) !important;
+  }
+}
+
 @import "@catppuccin/highlightjs/sass/catppuccin-mocha.scss";

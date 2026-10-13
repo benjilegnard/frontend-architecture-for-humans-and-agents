@@ -12,6 +12,14 @@
 </head>
 
 <body>
+  <!-- shared gradient for mermaid diagrams that don't support useGradient (sequence) -->
+  <!-- size 0 instead of display:none, hidden svg gradients are not rendered -->
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <linearGradient id="mermaid-border-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#cba6f7" /><!-- mocha mauve -->
+      <stop offset="100%" stop-color="#f5c2e7" /><!-- mocha pink -->
+    </linearGradient>
+  </svg>
   <div class="reveal">
     <div class="slides">
       <section data-markdown="frontend-architecture-for-humans-and-agents.md" data-separator="^---$"
