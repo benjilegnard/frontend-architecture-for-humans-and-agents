@@ -38,4 +38,10 @@ iframe {
   border: none;
 }
 
+// Mermaid "neo" look hard-codes an SVG drop shadow on sequence diagram actors
+// (not covered by the `dropShadow` theme variable); CSS beats the attribute.
+.reveal .mermaid svg [filter] {
+  filter: none;
+}
+
 @import "@catppuccin/highlightjs/sass/catppuccin-mocha.scss";

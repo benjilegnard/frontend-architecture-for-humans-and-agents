@@ -38,6 +38,7 @@ deck.initialize({
       lineColor: colors.overlay2.hex,
       textColor: colors.subtext1.hex,
       edgeLabelBackground: colors.base.hex,
+      dropShadow: "none",
     },
   },
 });
