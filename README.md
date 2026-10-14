@@ -1,12 +1,13 @@
-# Votre architecture n'existe que si elle est exécutable
+# Renforçons nos règles d'architecture frontend,<br/>pour les humains comme pour les agents 🏗️👮🤖
 
-*Contraindre l'architecture front-end, pour les humains comme pour les agents.*
+*Votre architecture n'existe que si elle est exécutable*
 
 Titres alternatifs :
 - Des règles d'architecture que personne ne peut contourner, pas même votre agent
 - Architecture front-end exécutable : Sheriff, ts-arch et la boucle de feedback des agents
 
 Format : conférence 45 minutes (≈42 min de contenu + Q&A).
+Niveau : intermédiaire
 
 ## Abstract
 
@@ -127,3 +128,21 @@ nx / turborepo comme outillage monorepo, DDD, design system : trois autres talks
 - https://github.com/softarc-consulting/sheriff
 - https://www.angulararchitects.io/en/blog/reliable-angular-architectures-with-ai-assisted-coding/
 - https://www.angulararchitects.io/en/blog/architecture-beyond-layers-tsarch-for-ai-agents/
+
+## Citations
+
+> Affabulating... I'll look into the codebase for existing patterns... 
+> *Claude*
+
+> Chaque ligne de code écrite est un échec.
+
+> echo "Make no mistakes" >> AGENTS.md
+> *David Goodenough*
+
+> un dev dans son coin, avec son llm, ne font pas une équipe
+> un llm dans son coin, avec son dev, ne font pas une convention
+> *BenjiLeGnard*
+
+> On fait de l'architecture pour se protéger des gens qui n'en ont rien à foutre
+> Un LLM de base n'en a rien à foutre
+> *BenjiLeGnard

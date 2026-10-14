@@ -1,4 +1,4 @@
-# Renforçons les règles d'architecture frontend,<br/>pour les humains comme pour les agents
+# Renforçons nos règles d'architecture frontend,<br/>pour les humains comme pour les agents 🏗️👮🤖
 
 
 ## Introduction
