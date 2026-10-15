@@ -2,11 +2,116 @@
 
 *Votre architecture n'existe que si elle est exécutable*
 
+---
+<a name="1.0"></a>
+## Introduction & contexte
 
-## Introduction
+
+### Votre serviteur
+<img
+  src="images/people/benjamin-legrand.png"
+  alt="BenjiLeGnard" 
+  style="width: 256px;height: 256px;float: left; border-radius: 50%"
+/>
+- Benjamin Legrand /<!-- .element class="fragment"-->  `@benjilegnard`
+- Front-end Architect / Tech Lead<!-- .element class="fragment"--> 
+- onepoint<!-- .element class="fragment"--><span class="sky">.</span>
+- Expertise<!-- .element class="fragment"-->  <img src="images/logos/angular.svg" style="display: inline;height: 1em;vertical-align: middle;margin: 0;"/>
+Notes:
+- je passe souvent sur des applis front où l'archi front laisse franchement à désirer
+- voir il n'y A PAS d'architecture
+
+---
+<a name="6.0"></a>
+## Conclusions, Limites <br/> et "plan du lundi matin"
+Notes:
+- je fais challenger par claude et il me sort ce concept à chaque fois
+- comme si toute conf devait forcément être utilitariste
 
 
-## Qu'est-ce qu'une bonne architecture frontend ?
+### Limites
+- les suffixes sont une intention déclarée, pas une garantie
+- les re-exports en barrel masquent les chaînes de dépendances à ts-arch
+- parfois, les messages d'erreur sont laconiques (`source -> target`)
+Notes:
+- erreurs: ça compte quand le lecteur est un agent
+- 
+
+### Les échappatoires
+- les échappatoires : comment on déroge, comment une règle évolue, qui valide
+
+
+### Adopter: plan en 3 étapes
+- taguer ses modules et activer les frontières
+- n'activer que des 3 règles qui correspondent à une douleur déjà vécue
+- brancher le stop hook et la CI
+
+
+### Adopter: tips & tricks
+- éviter de mettre en `error` des règles et partir en week-end
+- parlez en entre vous, le top-down ne fonctionne pas
+- partagez vos skills / docs & conventions en markdown dans git
+Notes:
+
+
+### Mode suppression d'eslint
+// TODO
+
+
+### Conclusion : 
+
+> une règle d'architecture non exécutable n'est pas une règle, c'est un souhait
+
+
+> le linter est votre meilleur ami, n'en faites pas un ennemi
+
+Notes:
+- et on a déjà des outils existants pour cadrer / vérifier ça
+- moi ce que je voudrais c'est si vous avez des projets avec eslint, allez regarder ce que
+- je passe en ce moment sur des projets ou y'a même pas de check CI, ou alors ça a suffisemment fait chier les devs pour qu'ils mettent des eslint-ignore partout
+- appropriez-vous vos outils
+
+
+### Sources des outils (github)
+- [eslint/eslint](https://github.com/eslint/eslint)
+- [ts-arch/ts-arch](https://github.com/ts-arch/ts-arch)
+- [softarc-consulting/sheriff](https://github.com/softarc-consulting/sheriff)
+
+
+### Inspiration
+
+<img
+  src="images/people/manfred-steyer.png"
+  alt="Photo de Manfred Steyer"
+  style="width: 256px;height: 256px;float: left; border-radius: 50%"
+/>
+- Manfred Steyer
+- <https://www.angulararchitects.io>
+- [Reliable Angular Architectures <br/>with AI-Assisted Coding](https://www.angulararchitects.io/en/blog/reliable-angular-architectures-with-ai-assisted-coding/)
+- [Architecture Beyond Layers: <br/>tsarch for AI Agents](https://www.angulararchitects.io/en/blog/architecture-beyond-layers-tsarch-for-ai-agents/)
+
+
+### Merci !
+
+<div style="display:flex;align-items:center;justify-content: space-between;">
+    <a
+        href="https://github.com/benjilegnard/frontend-architecture-for-humans-and-agents#readme"
+        target="_blank"
+    >
+        <img src="images/qrcodes/github-slides-and-demos.png" />
+    </a>
+    <div>
+        ⬅️ Slides & démos 
+        <br/><br/><br/>
+        Feedback ➡️
+    </div>
+    <a
+        href="https://openfeedback.io/VtrDATVvbl78SyeGnwPs/2026-10-16/cmugz7ijs005r01phz7q0n0c2 "
+        target="_blank"
+    >
+        <img src="images/qrcodes/openfeedback-etech-day-2026.png"/>
+    </a>
+</div>
 
 ---
 
@@ -278,11 +383,3 @@ process.exit(0);
 
 Notes:
 Même cœur `ci-checks.mjs`, autre convention : toujours exit 0, le `followup_message` devient la prochaine tâche de l'agent. `loop_limit: 3` dans `.cursor/hooks.json` borne les tentatives.
-
-
-## Sources
-
-- [ts-arch/ts-arch](https://github.com/ts-arch/ts-arch)
-- [softarc-consulting/sheriff](https://github.com/softarc-consulting/sheriff)
-- [Reliable Angular Architectures with AI-Assisted Coding](https://www.angulararchitects.io/en/blog/reliable-angular-architectures-with-ai-assisted-coding/)
-- [Architecture Beyond Layers: tsarch for AI Agents](https://www.angulararchitects.io/en/blog/architecture-beyond-layers-tsarch-for-ai-agents/)
