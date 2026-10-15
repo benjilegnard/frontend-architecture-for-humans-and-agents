@@ -57,6 +57,7 @@ iframe {
 
 @import "@catppuccin/highlightjs/sass/catppuccin-mocha.scss";
 
+// quotes
 .reveal blockquote {
   background-color: $base;
 
@@ -78,5 +79,27 @@ iframe {
     content: "”";
     right: .5rem;
     bottom: -3rem;
+  }
+}
+
+// code that is not inside a <pre> (inline)
+.reveal li>code {
+  position: relative;
+  padding: 0.1em 0.3em;
+  background-image: linear-gradient(to right, $mauve, $pink);
+  background-origin: content-box; // gradient spans the text only, not the padding
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+
+  // white box and border, drawn behind the gradient text
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: $base;
+    border-radius: 0.3em;
   }
 }
