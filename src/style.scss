@@ -47,6 +47,7 @@ iframe {
 // sequence diagrams ignore mermaid's useGradient, use the shared gradient from index.html
 // (only on boxes: a bounding box gradient on a straight line has 0 width/height and hides it)
 .reveal svg[aria-roledescription="sequence"] {
+
   rect.actor,
   rect.note,
   .labelBox {
@@ -55,3 +56,27 @@ iframe {
 }
 
 @import "@catppuccin/highlightjs/sass/catppuccin-mocha.scss";
+
+.reveal blockquote {
+  background-color: $base;
+
+  &::before,
+  &::after {
+    position: absolute;
+    color: $crust;
+    font-size: 5rem;
+  }
+
+  &::before {
+    content: "“";
+    left: 0;
+    top: -1rem;
+  }
+
+  &::after {
+
+    content: "”";
+    right: .5rem;
+    bottom: -3rem;
+  }
+}
