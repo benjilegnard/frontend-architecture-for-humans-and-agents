@@ -1,5 +1,7 @@
 @use "sass:color";
+@use "sass:map";
 @use "@catppuccin/palette/scss/mocha" as *;
+@use "@catppuccin/palette/scss/catppuccin" as ctp;
 @use "../node_modules/reveal.js/css/theme/template/mixins" as mixins;
 
 // Inject theme variables (see reveal.js/css/theme/template/settings.scss)
@@ -52,6 +54,15 @@ iframe {
   rect.note,
   .labelBox {
     stroke: url(#mermaid-border-gradient) !important;
+  }
+}
+
+// catppuccin accent colors as text color classes (`.peach`, `.sky`, ...)
+$accents: rosewater, flamingo, pink, mauve, red, maroon, peach, yellow, green, teal, sky, sapphire, blue, lavender;
+
+@each $name in $accents {
+  .#{$name} {
+    color: map.get(ctp.$palette, "mocha", "#{$name}");
   }
 }
 
