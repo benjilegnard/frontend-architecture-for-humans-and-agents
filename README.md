@@ -47,7 +47,7 @@ Budget : 2 + 5 + 16 + 6 + 7 + 3 = 39 min de contenu, ≈6 min de Q&A.
 - **1. Intro et cadrage (2 min)**
   - qui parle, pourquoi ce sujet
   - storytelling: une armée d'agents/de juniors se lance dans la réal d'un projet
-  - feature A, feature B, feature C, puis feature D qui utilise A,B,D, et 6 mois plus tard c'est la merde
+  - features `catalog`, `basket`, `orders`, puis `checkout` qui utilise les trois, et 6 mois plus tard c'est la merde
   - la thèse en une phrase : une règle d'architecture non exécutable n'existe pas
   - vos docs d'archis, adr et nfr non-exprimés ne suffisent pas
   - périmètre : Front, TypeScript d'abord, exemples Angular, ce qui est transposable à React / Vue, et au back.
@@ -62,7 +62,7 @@ Budget : 2 + 5 + 16 + 6 + 7 + 3 = 39 min de contenu, ≈6 min de Q&A.
   - quand ne PAS faire ça : POC, appli jetable, dev solo, projet à durée de vie de moins d'un an
 - **3. Des antipatterns aux règles (16 min)**
   - format imposé pour chaque bloc : antipattern → pattern → règle
-    - antipattern : le symptôme et ce qu'il coûte, montré sur la codebase de l'intro (features A, B, C, D)
+    - antipattern : le symptôme et ce qu'il coûte, montré sur la codebase de l'intro (`catalog`, `basket`, `orders`, `checkout`)
     - pattern : ce qui le corrige
     - règle : un snippet exécutable de 3 à 5 lignes
   - progression du plus petit au plus grand : un composant → une feature → les features entre elles
@@ -83,21 +83,21 @@ Budget : 2 + 5 + 16 + 6 + 7 + 3 = 39 min de contenu, ≈6 min de Q&A.
     - antipattern : le découpage par type technique (`components/`, `services/`, `pipes/`)
     - antipattern : l'arborescence qui recopie l'arbre de composants, et casse à chaque refacto d'UI
     - même cause pour les deux : on range par technique ou par UI, pas par domaine
-    - pattern : d'abord le domaine, ensuite le rôle ; les 4 rôles de 3.1 deviennent des dossiers (`booking/feature`, `booking/ui`, `booking/state`, `booking/client`, `booking/model`)
+    - pattern : d'abord le domaine, ensuite le rôle ; les 4 rôles de 3.1 deviennent des dossiers (`orders/feature`, `orders/ui`, `orders/state`, `orders/client`, `orders/model`)
     - pattern : c'est quoi une feature, et où s'arrête-t-elle
-    - règle : Sheriff, tags `domain:booking` et `type:feature|ui|state|client|model`, `depRules` entre types
+    - règle : Sheriff, tags `domain:orders` et `type:feature|ui|state|client|model`, `depRules` entre types
       - `feature` → `ui`, `state`, `model`
       - `ui` → `model`
       - `state` → `client`, `model`
       - `client` → `model`
   - **3.4 Ne pas mélanger les features (5 min)**
-    - le cœur du storytelling de l'intro : la feature D qui utilise A, B et C
-    - antipattern : les deep imports, D va piocher `booking/state/internal-helper.ts`
-    - antipattern : les dépendances circulaires, A importe B qui importe A
+    - le cœur du storytelling de l'intro : `checkout` qui utilise `catalog`, `basket` et `orders`
+    - antipattern : les deep imports, `checkout` va piocher `orders/state/internal-helper.ts`
+    - antipattern : les dépendances circulaires, `catalog` importe `basket` qui importe `catalog`
     - antipattern : le god bucket, `shared/` devient le dépotoir de ce qu'on n'a pas su ranger et toute l'app en dépend
     - pattern : API publique de module, `index.ts` comme seule porte d'entrée, on choisit ce qu'on n'exporte pas
     - pattern : le sens des dépendances, unidirectionnel, et pourquoi
-    - pattern : quand D a besoin de A et B, on remonte dans un module partagé typé ou on orchestre au niveau de D, jamais de lien horizontal A ↔ B
+    - pattern : quand `checkout` a besoin de `catalog` et `basket`, on remonte dans un module partagé typé ou on orchestre au niveau de `checkout`, jamais de lien horizontal `catalog` ↔ `basket`
     - pattern : `shared/` sous discipline, `domain:shared` n'accepte que `ui`, `model` et `util`, jamais `state` ni `feature`
     - slide de clarification sur les barrels : le barrel interne qui ré-exporte tout cache le couplage (antipattern), le barrel `index.ts` comme API publique est un contrat (pattern) ; teaser de la limite ts-arch (section 6)
     - règle : Sheriff, encapsulation par `index.ts` (les deep imports sont bloqués par défaut) et règles `domain:*`
@@ -106,19 +106,21 @@ Budget : 2 + 5 + 16 + 6 + 7 + 3 = 39 min de contenu, ≈6 min de Q&A.
     - la règle d'or : si vous ne savez pas nommer la contrainte, vous ne saurez pas l'outiller
     - transition : "on vient d'écrire 6 règles, laquelle tourne où, et quand ?"
 - **4. Des règles écrites aux règles exécutables (6 min)**
-  - l'échelle de contexte du feedback, c'est le vrai critère de choix
-    - ESLint : à la frappe, portée locale au fichier
-    - Sheriff : dans l'IDE et en CLI, portée graphe d'imports (domaines, couches, encapsulation)
-    - ts-arch : au run de tests, portée intra-feature (conventions de nommage, cycles, slices PlantUML)
-    - nx enforce-module-boundaries : portée workspace, si vous êtes déjà en monorepo nx
+  - le vrai critère de choix : ce que l'outil voit (portée), puis quand il vous le dit (moment)
+    - ESLint natif (angular-eslint, `no-restricted-imports`, `@ngrx/eslint-plugin`) : voit un fichier et ses imports directs ; à la frappe, pre-commit, CI
+    - Sheriff : voit le graphe de modules (dossiers avec `index.ts`, tags, `depRules`, encapsulation) ; à la frappe via son plugin ESLint, en CLI (`sheriff verify`) en CI
+    - ts-arch : voit les fichiers et leurs conventions dans tout le projet (nommage, dossiers, cycles), y compris à l'intérieur d'un module ; au run de tests uniquement, pas de feedback à la frappe
+    - alternatives : eslint-plugin-boundaries (frontières par chemins, en pur ESLint), dependency-cruiser (graphe complet, CLI, pas
+  d'IDE), nx `enforce-module-boundaries` (si vous êtes déjà en monorepo nx)
     - CI : le filet de sécurité, jamais la boucle de feedback principale
   - la grille de décision : ce que chaque outil attrape, ce qu'il rate, ce que coûte son adoption
-  - les snippets ont déjà été montrés en section 3 : ici, un seul live qui casse une règle de 3.4 sur le fil rouge
+  - les snippets ont déjà été montrés en section 3 : ici, un seul live (optionnel) qui casse une règle de 3.4 sur le fil rouge
   - le setup réel : `tsconfig.arch.json`, le runner de tests, les scripts npm, le job CI
 - **5. La boucle de feedback des agents (7 min)**
   - pourquoi un agent dérive : il optimise "du code qui marche", pas "du code qui respecte vos frontières"
-  - les règles comme contexte partagé humains / agents : `AGENTS.md` pour réduire les hallucinations, hook et CI pour les empêcher. 
-  - le context layering : always-on (`AGENTS.md`, `CLAUDE.md`) vs task-specific (`docs/architecture-boundaries.md`)
+  - les règles comme contexte partagé humains / agents : `AGENTS.md` pour donner les commandes de vérifications, hook et CI pour les empêcher. 
+  - `.skills/` pour cadrer les compétences / ce que connait l'agent (partagez-les!).
+  - le context layering : always-on (`AGENTS.md`, `CLAUDE.md`) vs task-specific (`docs/architecture-boundaries.md` / skills)
   - le stop hook : un `ci-checks.mjs` commun, la traduction du résultat par outil (exit code 2 pour Claude Code, JSON sur stdout pour Cursor)
   - démo : l'agent viole une frontière, le hook le rattrape, il se corrige tout seul
   - le mode d'échec qui compte : donnez un test à faire passer à un agent, il finira par modifier le test
@@ -136,17 +138,13 @@ Budget : 2 + 5 + 16 + 6 + 7 + 3 = 39 min de contenu, ≈6 min de Q&A.
     - taguer ses modules et activer les frontières
     - n'encoder que les 3 règles qui correspondent à une douleur déjà vécue
     - brancher le stop hook et la CI
-  - activer des régles de lint test sur une codebase existante : tips & tricks
+  - activer des régles de lint test sur une codebase existante : tips & tricks (eslint suppressions)
   - conclusion : une règle non exécutable n'est pas une règle, c'est un souhait
-
-## À trancher avant de soumettre
-
-- retour d'expérience : est-ce qu'on a un vrai projet avec des chiffres avant / après, ou est-ce qu'on assume l'hypothèse ?
-- les démos agent sont non déterministes : scripter le terminal ou pré-enregistrer avec narration live, et ne garder en vrai live que la partie déterministe (Sheriff / ts-arch qui échoue)
 
 ## Tranché
 
 - framework : Angular assumé pour les exemples ; Sheriff, ts-arch et ESLint s'appliquent à tout l'écosystème Node.js (à reporter dans un slide)
+- les démos agent sont non déterministes : scripter le terminal ou pré-enregistrer avec narration live, et ne garder en vrai live que la partie déterministe (Sheriff / ts-arch qui échoue)
 
 ## Hors périmètre (assumé)
 
