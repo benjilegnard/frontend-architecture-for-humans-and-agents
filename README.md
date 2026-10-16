@@ -9,6 +9,8 @@ Titres alternatifs :
 Format : conférence 45 minutes (≈40 min de contenu + Q&A).
 Niveau : intermédiaire
 
+Slides : <https://benjilegnard.github.io/frontend-architecture-for-humans-and-agents/#/>
+
 ## Abstract
 
 ```
